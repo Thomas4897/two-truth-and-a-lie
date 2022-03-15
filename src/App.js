@@ -98,7 +98,7 @@ export class App extends Component {
       <div className="App">
         <h1>Two Truths and a Lie</h1>
         <form onSubmit={this.handleOnSubmit}>
-          <div>
+          <div className="username-prompt-div">
             <label>User Name:</label>
             <input
               name="username"
@@ -107,7 +107,7 @@ export class App extends Component {
               placeholder=" User Name"
             />
           </div>
-          <div>
+          <div className="prompt-div">
             <label>Propmt 1:</label>
             <input
               name="promptOne"
@@ -117,13 +117,14 @@ export class App extends Component {
             />
             <label> isLie:</label>
             <input
+              className="lie-checkbox"
               name="promptOne"
               type="checkbox"
               checked={this.state.promptOne.isLie}
               onChange={this.handleIsLieChecked}
             />
           </div>
-          <div>
+          <div className="prompt-div">
             <label>Propmt 2:</label>
             <input
               name="promptTwo"
@@ -133,13 +134,14 @@ export class App extends Component {
             />
             <label> isLie:</label>
             <input
+              className="lie-checkbox"
               name="promptTwo"
               type="checkbox"
               checked={this.state.promptTwo.isLie}
               onChange={this.handleIsLieChecked}
             />
           </div>
-          <div>
+          <div className="prompt-div">
             <label>Propmt 3:</label>
             <input
               name="promptThree"
@@ -147,28 +149,48 @@ export class App extends Component {
               onChange={this.handlePromptInputChange}
               placeholder=" Prompt 3"
             />
-            <label> isLie:</label>
+            <label>isLie:</label>
             <input
+              className="lie-checkbox"
               name="promptThree"
               type="checkbox"
               checked={this.state.promptThree.isLie}
               onChange={this.handleIsLieChecked}
             />
           </div>
-          <div>
-            <label>vote</label>
+          <div className="vote-prompt-div">
+            <label>Vote:</label>
             <input
               name="vote"
               value={vote}
               onChange={this.handleInputChange}
-              placeholder=" vote"
+              placeholder=" Vote"
             />
           </div>
 
-          <button onClick={this.sendPromptClick}>Send Prompt</button>
-          <button onClick={this.sendVoteClick}>Send vote</button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={this.sendPromptClick}
+          >
+            Send Prompt
+          </button>
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={this.sendVoteClick}
+          >
+            Send vote
+          </button>
+
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={this.pingServer}
+          >
+            Ping Server
+          </button>
         </form>
-        <button onClick={this.pingServer}>Ping Server</button>
       </div>
     );
   }
