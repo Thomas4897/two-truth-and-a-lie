@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import "./App.css";
 // import { v4 as uuidv4 } from "uuid";
 
+const serverURL = "http://cab2-108-53-232-66.ngrok.io";
+
 export class App extends Component {
   state = {
     // usersArray: [
@@ -14,11 +16,11 @@ export class App extends Component {
     //   },
     // ],
 
-    newUsername: "",
-    newPromptOne: { text: "", isLie: false },
-    newPromptTwo: { text: "", isLie: false },
-    newPromptThree: { text: "", isLie: false },
-    newVote: "",
+    username: "",
+    promptOne: { text: "", isLie: false },
+    promptTwo: { text: "", isLie: false },
+    promptThree: { text: "", isLie: false },
+    vote: "",
   };
 
   handleInputChange = (event) => {
@@ -50,34 +52,47 @@ export class App extends Component {
 
   handleOnSubmit = (event) => {
     event.preventDefault();
-    // const { newUsername, newPromptOne, newPromptTwo, newPromptThree } =
+    // const { username, promptOne, promptTwo, promptThree } =
     //   this.state;
 
     // let newUsersArray = [
     //   {
     //     // id: uuidv4(),
-    //     username: this.state.newUsername,
-    //     promptOne: this.state.newPromptOne,
-    //     promptTwo: this.state.newPromptTwo,
-    //     promptThree: this.state.newPromptThree,
+    //     username: this.state.username,
+    //     promptOne: this.state.promptOne,
+    //     promptTwo: this.state.promptTwo,
+    //     promptThree: this.state.promptThree,
     //   },
     // ];
 
     this.setState({
-      newUsername: this.state.newUsername,
-      newPromptOne: this.state.newPromptOne,
-      newPromptTwo: this.state.newPromptTwo,
-      newPromptThree: this.state.newPromptThree,
-      newVote: "",
+      username: this.state.username,
+      promptOne: this.state.promptOne,
+      promptTwo: this.state.promptTwo,
+      promptThree: this.state.promptThree,
+      vote: this.state.vote,
     });
+    // console.log(this.state);
+  };
+
+  sendPromptClick = async () => {
+    const response = await sendPrompt(this.state);
+    console.log("sendPromptClick:", response);
+  };
+
+  sendVoteClick = async () => {
+    const response = await sendVote(this.state);
+    console.log("sendVoteClick:", response);
+  };
+
+  // James Nissenbaum
+  pingServer = async () => {
+    const response = await ping(this.state.username);
+    console.log("pingServer:", response);
   };
 
   render() {
-    const { newUsername, newPromptOne, newPromptTwo, newPromptThree, newVote } =
-      this.state;
-
-    // console.log(this.state);
-    console.log(this.state);
+    const { username, promptOne, promptTwo, promptThree, vote } = this.state;
 
     return (
       <div className="App">
@@ -86,8 +101,8 @@ export class App extends Component {
           <div>
             <label>User Name:</label>
             <input
-              name="newUsername"
-              value={newUsername}
+              name="username"
+              value={username}
               onChange={this.handleInputChange}
               placeholder=" User Name"
             />
@@ -95,67 +110,166 @@ export class App extends Component {
           <div>
             <label>Propmt 1:</label>
             <input
-              name="newPromptOne"
-              value={newPromptOne.text}
+              name="promptOne"
+              value={promptOne.text}
               onChange={this.handlePromptInputChange}
               placeholder=" Prompt 1"
             />
             <label> isLie:</label>
             <input
-              name="newPromptOne"
+              name="promptOne"
               type="checkbox"
-              checked={this.state.newPromptOne.isLie}
+              checked={this.state.promptOne.isLie}
               onChange={this.handleIsLieChecked}
             />
           </div>
           <div>
             <label>Propmt 2:</label>
             <input
-              name="newPromptTwo"
-              value={newPromptTwo.text}
+              name="promptTwo"
+              value={promptTwo.text}
               onChange={this.handlePromptInputChange}
               placeholder=" Prompt 2"
             />
             <label> isLie:</label>
             <input
-              name="newPromptTwo"
+              name="promptTwo"
               type="checkbox"
-              checked={this.state.newPromptTwo.isLie}
+              checked={this.state.promptTwo.isLie}
               onChange={this.handleIsLieChecked}
             />
           </div>
           <div>
             <label>Propmt 3:</label>
             <input
-              name="newPromptThree"
-              value={newPromptThree.text}
+              name="promptThree"
+              value={promptThree.text}
               onChange={this.handlePromptInputChange}
               placeholder=" Prompt 3"
             />
             <label> isLie:</label>
             <input
-              name="newPromptThree"
+              name="promptThree"
               type="checkbox"
-              checked={this.state.newPromptThree.isLie}
+              checked={this.state.promptThree.isLie}
               onChange={this.handleIsLieChecked}
             />
           </div>
           <div>
-            <label>Vote</label>
+            <label>vote</label>
             <input
-              name="newVote"
-              value={newVote}
+              name="vote"
+              value={vote}
               onChange={this.handleInputChange}
-              placeholder=" Vote"
+              placeholder=" vote"
             />
           </div>
 
-          <button>Send Prompt</button>
-          <button>Send Vote</button>
+          <button onClick={this.sendPromptClick}>Send Prompt</button>
+          <button onClick={this.sendVoteClick}>Send vote</button>
         </form>
+        <button onClick={this.pingServer}>Ping Server</button>
       </div>
     );
   }
 }
 
+async function ping(userName) {
+  // console.log(userName);
+  const response = await fetch(`${serverURL}/ping`, {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "access-control-request-headers": "content-type",
+      "x-Trigger": "CORS",
+    },
+    body: JSON.stringify({
+      userName,
+    }),
+  });
+  const pingResponse = await response.text();
+  return pingResponse;
+}
+
+async function sendPrompt(event) {
+  const response = await fetch(`${serverURL}/prompt-submit`, {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "access-control-request-headers": "content-type",
+      "x-Trigger": "CORS",
+    },
+
+    body: JSON.stringify({
+      userName: event.username,
+      prompts: {
+        promptOne: {
+          prompt: event.promptOne.text,
+          isLie: event.promptOne.isLie,
+        },
+        promptTwo: {
+          prompt: event.promptTwo.text,
+          isLie: event.promptTwo.isLie,
+        },
+        promptThree: {
+          prompt: event.promptThree.text,
+          isLie: event.promptThree.isLie,
+        },
+      },
+    }),
+  });
+  const pingResponse = await response.text();
+
+  return pingResponse;
+}
+
+async function sendVote(event) {
+  const response = await fetch(`${serverURL}/prompt-vote`, {
+    method: "POST", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      "access-control-request-headers": "content-type",
+      "x-Trigger": "CORS",
+    },
+    body: JSON.stringify({
+      userName: event.username,
+      promptVote: Number(event.vote), //Has to be type "number" and between 1 and 3
+    }),
+  });
+  const pingResponse = await response.text();
+  // console.log("pingResponse:", pingResponse);
+  return pingResponse;
+}
+
 export default App;
+
+//! POST to /prompt-submit
+// body: {
+//     userName: "James",
+//     prompts: {
+//         promptOne: {
+//             prompt: "lie",
+//             isLie: true,
+//         },
+//         promptTwo: {
+//             prompt: "truth",
+//             isLie: false,
+//         },
+//         promptThree: {
+//             prompt: "truth",
+//             isLie: false,
+//         },
+//     }
+// }
+
+//! POST to /prompt-vote
+// body: {
+//     userName: "James Nissenbaum"
+//     promptVote: 2 //Has to be type "number" and between 1 and 3
+// }
