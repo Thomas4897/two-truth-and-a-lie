@@ -1,21 +1,12 @@
 import React, { Component } from "react";
 import "./App.css";
+import GetPoll from "./GetPoll";
 // import { v4 as uuidv4 } from "uuid";
 
-const serverURL = "http://cab2-108-53-232-66.ngrok.io";
+const serverURL = "http://ce44-108-53-232-66.ngrok.io";
 
 export class App extends Component {
   state = {
-    // usersArray: [
-    //   {
-    //     id: uuidv4(),
-    //     username: "zeroCrash",
-    //     promptOne: {text: "truth", isLie: false}
-    //     promptTwo: "truth",
-    //     promptThree: "lie",
-    //   },
-    // ],
-
     username: "",
     promptOne: { text: "", isLie: false },
     promptTwo: { text: "", isLie: false },
@@ -50,31 +41,6 @@ export class App extends Component {
     this.setState(newData);
   };
 
-  handleOnSubmit = (event) => {
-    event.preventDefault();
-    // const { username, promptOne, promptTwo, promptThree } =
-    //   this.state;
-
-    // let newUsersArray = [
-    //   {
-    //     // id: uuidv4(),
-    //     username: this.state.username,
-    //     promptOne: this.state.promptOne,
-    //     promptTwo: this.state.promptTwo,
-    //     promptThree: this.state.promptThree,
-    //   },
-    // ];
-
-    this.setState({
-      username: this.state.username,
-      promptOne: this.state.promptOne,
-      promptTwo: this.state.promptTwo,
-      promptThree: this.state.promptThree,
-      vote: this.state.vote,
-    });
-    // console.log(this.state);
-  };
-
   sendPromptClick = async () => {
     const response = await sendPrompt(this.state);
     console.log("sendPromptClick:", response);
@@ -85,7 +51,6 @@ export class App extends Component {
     console.log("sendVoteClick:", response);
   };
 
-  // James Nissenbaum
   pingServer = async () => {
     const response = await ping(this.state.username);
     console.log("pingServer:", response);
@@ -97,100 +62,103 @@ export class App extends Component {
     return (
       <div className="App">
         <h1>Two Truths and a Lie</h1>
-        <form onSubmit={this.handleOnSubmit}>
-          <div className="username-prompt-div">
-            <label>User Name:</label>
-            <input
-              name="username"
-              value={username}
-              onChange={this.handleInputChange}
-              placeholder=" User Name"
-            />
-          </div>
-          <div className="prompt-div">
-            <label>Propmt 1:</label>
-            <input
-              name="promptOne"
-              value={promptOne.text}
-              onChange={this.handlePromptInputChange}
-              placeholder=" Prompt 1"
-            />
-            <label> isLie:</label>
-            <input
-              className="lie-checkbox"
-              name="promptOne"
-              type="checkbox"
-              checked={this.state.promptOne.isLie}
-              onChange={this.handleIsLieChecked}
-            />
-          </div>
-          <div className="prompt-div">
-            <label>Propmt 2:</label>
-            <input
-              name="promptTwo"
-              value={promptTwo.text}
-              onChange={this.handlePromptInputChange}
-              placeholder=" Prompt 2"
-            />
-            <label> isLie:</label>
-            <input
-              className="lie-checkbox"
-              name="promptTwo"
-              type="checkbox"
-              checked={this.state.promptTwo.isLie}
-              onChange={this.handleIsLieChecked}
-            />
-          </div>
-          <div className="prompt-div">
-            <label>Propmt 3:</label>
-            <input
-              name="promptThree"
-              value={promptThree.text}
-              onChange={this.handlePromptInputChange}
-              placeholder=" Prompt 3"
-            />
-            <label>isLie:</label>
-            <input
-              className="lie-checkbox"
-              name="promptThree"
-              type="checkbox"
-              checked={this.state.promptThree.isLie}
-              onChange={this.handleIsLieChecked}
-            />
-          </div>
-          <div className="vote-prompt-div">
-            <label>Vote:</label>
-            <input
-              name="vote"
-              value={vote}
-              onChange={this.handleInputChange}
-              placeholder=" Vote"
-            />
-          </div>
+        {/* <form onSubmit={this.handleOnSubmit}> */}
+        <div className="username-prompt-div">
+          <label>User Name:</label>
+          <input
+            name="username"
+            value={username}
+            onChange={this.handleInputChange}
+            placeholder=" User Name"
+          />
+        </div>
+        <div className="prompt-div">
+          <label>Propmt 1:</label>
+          <input
+            name="promptOne"
+            value={promptOne.text}
+            onChange={this.handlePromptInputChange}
+            placeholder=" Prompt 1"
+          />
+          <label> isLie:</label>
+          <input
+            className="lie-checkbox"
+            name="promptOne"
+            type="checkbox"
+            checked={this.state.promptOne.isLie}
+            onChange={this.handleIsLieChecked}
+          />
+        </div>
+        <div className="prompt-div">
+          <label>Propmt 2:</label>
+          <input
+            name="promptTwo"
+            value={promptTwo.text}
+            onChange={this.handlePromptInputChange}
+            placeholder=" Prompt 2"
+          />
+          <label> isLie:</label>
+          <input
+            className="lie-checkbox"
+            name="promptTwo"
+            type="checkbox"
+            checked={this.state.promptTwo.isLie}
+            onChange={this.handleIsLieChecked}
+          />
+        </div>
+        <div className="prompt-div">
+          <label>Propmt 3:</label>
+          <input
+            name="promptThree"
+            value={promptThree.text}
+            onChange={this.handlePromptInputChange}
+            placeholder=" Prompt 3"
+          />
+          <label>isLie:</label>
+          <input
+            className="lie-checkbox"
+            name="promptThree"
+            type="checkbox"
+            checked={this.state.promptThree.isLie}
+            onChange={this.handleIsLieChecked}
+          />
+        </div>
+        <div className="vote-prompt-div">
+          <label>Vote:</label>
+          <input
+            name="vote"
+            value={vote}
+            onChange={this.handleInputChange}
+            placeholder=" Vote"
+          />
+        </div>
 
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={this.sendPromptClick}
-          >
-            Send Prompt
-          </button>
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={this.sendVoteClick}
-          >
-            Send vote
-          </button>
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={this.sendPromptClick}
+        >
+          Send Prompt
+        </button>
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={this.sendVoteClick}
+        >
+          Send vote
+        </button>
 
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={this.pingServer}
-          >
-            Ping Server
-          </button>
-        </form>
+        <button
+          type="button"
+          className="btn btn-primary"
+          onClick={this.pingServer}
+        >
+          Ping Server
+        </button>
+
+        {/* </form> */}
+
+        <GetPoll />
       </div>
     );
   }
@@ -265,7 +233,7 @@ async function sendVote(event) {
     }),
   });
   const pingResponse = await response.text();
-  // console.log("pingResponse:", pingResponse);
+
   return pingResponse;
 }
 
@@ -295,3 +263,5 @@ export default App;
 //     userName: "James Nissenbaum"
 //     promptVote: 2 //Has to be type "number" and between 1 and 3
 // }
+
+// GET to /prompt-poll
