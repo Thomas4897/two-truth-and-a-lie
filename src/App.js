@@ -16,9 +16,9 @@ export class App extends Component {
 
   handleInputChange = (event) => {
     this.setState({
-      ...this.state,
       [event.target.name]: event.target.value,
     });
+    console.log(this.state);
   };
 
   handlePromptInputChange = (event) => {
@@ -32,12 +32,13 @@ export class App extends Component {
 
   handleIsLieChecked = (event) => {
     const newData = {
-      ...this.state,
+      // ...this.state,
       [event.target.name]: {
         ...this.state[event.target.name],
         isLie: !this.state[event.target.name].isLie,
       },
     };
+    // console.log(this.state);
     this.setState(newData);
   };
 
@@ -85,7 +86,6 @@ export class App extends Component {
             className="lie-checkbox"
             name="promptOne"
             type="checkbox"
-            checked={this.state.promptOne.isLie}
             onChange={this.handleIsLieChecked}
           />
         </div>
@@ -102,7 +102,6 @@ export class App extends Component {
             className="lie-checkbox"
             name="promptTwo"
             type="checkbox"
-            checked={this.state.promptTwo.isLie}
             onChange={this.handleIsLieChecked}
           />
         </div>
@@ -119,7 +118,6 @@ export class App extends Component {
             className="lie-checkbox"
             name="promptThree"
             type="checkbox"
-            checked={this.state.promptThree.isLie}
             onChange={this.handleIsLieChecked}
           />
         </div>

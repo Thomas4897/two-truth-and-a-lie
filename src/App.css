@@ -51,3 +51,14 @@ label {
   margin-left: 5px;
   margin-right: 5px;
 }
+
+.GetPoll-results {
+  height: 70px;
+  font-weight: bolder;
+  color: green;
+}
+
+.GetPoll-prompts {
+  height: 70px;
+  font-weight: bold;
+}

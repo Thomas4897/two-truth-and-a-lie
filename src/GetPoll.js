@@ -8,42 +8,72 @@ export class GetPoll extends Component {
     promptOne: "",
     promptTwo: "",
     promptThree: "",
-    voteOne: 0,
-    voteTwo: 0,
-    voteThree: 0,
-    isLie: [],
+    showLie: false,
+    results: false,
+    isLie: {
+      promptOne: { lie: "", votes: 0 },
+      promptTwo: { lie: "", votes: 0 },
+      promptThree: { lie: "", votes: 0 },
+    },
   };
 
-  getPoll = async () => {
+  handleGetPoll = async () => {
     const response = await poll(this.state);
 
-    console.log("getPoll:", response);
+    console.log("handleGetPoll:", response);
     this.setState({
       username: response.currentPrompt.userName,
       promptOne: response.currentPrompt.prompts.promptOne.prompt,
       promptTwo: response.currentPrompt.prompts.promptTwo.prompt,
       promptThree: response.currentPrompt.prompts.promptThree.prompt,
-      voteOne: response.promptVotes[1],
-      voteTwo: response.promptVotes[2],
-      voteThree: response.promptVotes[3],
+      // voteOne: response.promptVotes[1],
+      // voteTwo: response.promptVotes[2],
+      // voteThree: response.promptVotes[3],
       isLie: {
-        promptOne: response.currentPrompt.prompts.promptOne.isLie,
-        promptTwo: response.currentPrompt.prompts.promptTwo.isLie,
-        promptThree: response.currentPrompt.prompts.promptThree.isLie,
+        promptOne: {
+          lie: response.currentPrompt.prompts.promptOne.isLie,
+          votes: response.promptVotes[1],
+        },
+        promptTwo: {
+          lie: response.currentPrompt.prompts.promptTwo.isLie,
+          votes: response.promptVotes[2],
+        },
+        promptThree: {
+          lie: response.currentPrompt.prompts.promptThree.isLie,
+          votes: response.promptVotes[3],
+        },
       },
     });
     // console.log(this.state);
   };
 
-  //   showLieChecked = (event) => {
-  //     const isLieKeys = Object.keys(this.state.isLie);
-  //     // console.log(this.state.isLie.promptOne);
+  handleShowLieChecked = () => {
+    const newData = {
+      showLie: !this.state.showLie,
+    };
+    this.setState(newData);
+    this.handleShowResults();
+  };
 
-  //     const findLie = isLieKeys.map((prompt) => {
-  //       return this.state.isLie[prompt] === true;
-  //     });
-  //     // console.log(findLie.style.color);
-  //   };
+  handleShowResults = () => {
+    const getKeys = Object.keys(this.state.isLie);
+    let mostVotes = 0;
+    let newData = {};
+
+    for (let i = 0; i < getKeys.length; i++) {
+      let votes = this.state.isLie[getKeys[i]].votes;
+      let lie = this.state.isLie[getKeys[i]].lie;
+
+      if (votes > mostVotes) {
+        mostVotes = votes;
+        newData = {
+          results: lie,
+        };
+      }
+    }
+
+    this.setState(newData);
+  };
 
   render() {
     return (
@@ -51,39 +81,78 @@ export class GetPoll extends Component {
         <button
           type="button"
           className="btn btn-primary"
-          onClick={this.getPoll}
+          onClick={this.handleGetPoll}
         >
           Get Poll
         </button>
         <label>showLie: </label>
         <input
-          className="showLieie-checkbox"
+          className="showLie-checkbox"
           //   name="showLie"
           type="checkbox"
           //   checked={this.state.promptThree.isLie}
-          onChange={this.showLieChecked}
+          onChange={this.handleShowLieChecked}
         />
-        <div>
+        <div className="GetPoll-results">
+          {this.state.showLie
+            ? this.state.results
+              ? "We figured it out!"
+              : "You fooled us!"
+            : ""}
+        </div>
+        <div className="GetPoll-prompts">
           <p>User Name: {this.state.username}</p>
         </div>
-        <div>
-          <p className="promptOne">Prompt 1: {this.state.promptOne}</p>
+        <div className="GetPoll-prompts">
+          <p
+            className="promptOne"
+            style={{
+              color: this.state.showLie
+                ? this.state.isLie.promptOne.lie
+                  ? "red"
+                  : "green"
+                : "",
+            }}
+          >
+            Prompt 1: {this.state.promptOne}
+          </p>
         </div>
-        <div>
-          {/* <p className="promptTwo" style={{ color: "red" }}> */}
-          <p className="promptTwo">Prompt 2: {this.state.promptTwo}</p>
+        <div className="GetPoll-prompts">
+          <p
+            className="promptTwo"
+            style={{
+              color: this.state.showLie
+                ? this.state.isLie.promptTwo.lie
+                  ? "red"
+                  : "green"
+                : "",
+            }}
+          >
+            Prompt 2: {this.state.promptTwo}
+          </p>
         </div>
-        <div>
-          <p className="promptThree">Prompt 3: {this.state.promptThree}</p>
+        <div className="GetPoll-prompts">
+          <p
+            className="promptThree"
+            style={{
+              color: this.state.showLie
+                ? this.state.isLie.promptThree.lie
+                  ? "red"
+                  : "green"
+                : false,
+            }}
+          >
+            Prompt 3: {this.state.promptThree}
+          </p>
         </div>
-        <div>
-          <p>Vote 1: {this.state.voteOne}</p>
+        <div className="GetPoll-prompts">
+          <p>Vote 1: {this.state.isLie.promptOne.votes}</p>
         </div>
-        <div>
-          <p>Vote 2: {this.state.voteTwo}</p>
+        <div className="GetPoll-prompts">
+          <p>Vote 2: {this.state.isLie.promptTwo.votes}</p>
         </div>
-        <div>
-          <p>Vote 3: {this.state.voteThree}</p>
+        <div className="GetPoll-prompts">
+          <p>Vote 3: {this.state.isLie.promptThree.votes}</p>
         </div>
       </div>
     );
