@@ -1,33 +1,17 @@
 import React, { Component } from "react";
 import "./App.css";
 import GetPoll from "./GetPoll";
-import { InputPrompt } from "./component";
-// import { InputPrompt } from "./component";
 // import { v4 as uuidv4 } from "uuid";
 
-const serverURL = "http://ad4d-108-53-232-66.ngrok.io";
+const serverURL = "http://ad4d-108-53-232-66.ngrok.ioZ";
 
 export class App extends Component {
   state = {
-    userName: "",
-    vote: 0,
-    prompts: [
-      {
-        name: "promptOne",
-        prompt: "",
-        isLie: false,
-      },
-      {
-        name: "promptTwo",
-        prompt: "",
-        isLie: false,
-      },
-      {
-        name: "promptThree",
-        prompt: "",
-        isLie: false,
-      },
-    ],
+    username: "",
+    promptOne: { text: "", isLie: false },
+    promptTwo: { text: "", isLie: false },
+    promptThree: { text: "", isLie: false },
+    vote: "",
   };
 
   handleInputChange = (event) => {
@@ -37,57 +21,25 @@ export class App extends Component {
     console.log(this.state);
   };
 
-  handlePromptInputChange = (e) => {
-    const name = e.target.name;
-    const value = e.target.value;
-
-    let updatedPrompts = [...this.state.prompts];
-
-    updatedPrompts = updatedPrompts.map((mappedPrompt) => {
-      if (mappedPrompt.name === name) {
-        return {
-          ...mappedPrompt,
-          prompt: value,
-        };
-      }
-      return {
-        ...mappedPrompt,
-      };
-    });
-    this.setState(
-      {
-        prompts: updatedPrompts,
+  handlePromptInputChange = (event) => {
+    this.setState({
+      [event.target.name]: {
+        ...this.state[event.target.name],
+        text: event.target.value,
       },
-      () => {
-        console.log(this.state); //Runs after the state has updated
-      }
-    );
+    });
   };
 
-  handleIsLieChecked = (e) => {
-    const name = e.target.name;
-
-    let updatedPrompts = [...this.state.prompts];
-
-    updatedPrompts = updatedPrompts.map((mappedPrompt) => {
-      if (mappedPrompt.name === name) {
-        return {
-          ...mappedPrompt,
-          isLie: !mappedPrompt.isLie,
-        };
-      }
-      return {
-        ...mappedPrompt,
-      };
-    });
-    this.setState(
-      {
-        prompts: updatedPrompts,
+  handleIsLieChecked = (event) => {
+    const newData = {
+      // ...this.state,
+      [event.target.name]: {
+        ...this.state[event.target.name],
+        isLie: !this.state[event.target.name].isLie,
       },
-      () => {
-        console.log(this.state); //Runs after the state has updated
-      }
-    );
+    };
+    // console.log(this.state);
+    this.setState(newData);
   };
 
   sendPromptClick = async () => {
@@ -106,36 +58,69 @@ export class App extends Component {
   };
 
   render() {
-    const { userName } = this.state;
-    const { vote } = this.state.prompts;
+    const { username, promptOne, promptTwo, promptThree, vote } = this.state;
 
     return (
       <div className="App">
         <h1>Two Truths and a Lie</h1>
-
-        <div className="userName-prompt-div">
+        {/* <form onSubmit={this.handleOnSubmit}> */}
+        <div className="username-prompt-div">
           <label>User Name:</label>
           <input
-            name="userName"
-            value={userName}
+            name="username"
+            value={username}
             onChange={this.handleInputChange}
             placeholder=" User Name"
           />
         </div>
-
-        {this.state.prompts.map(({ name, prompt, isLie }, idx) => {
-          return (
-            <InputPrompt
-              key={`Input-prompt-${idx}`}
-              nameProp={name}
-              promptProp={prompt}
-              isLieProp={isLie}
-              handlePromptInputChange={this.handlePromptInputChange}
-              handleIsLieChecked={this.handleIsLieChecked}
-            />
-          );
-        })}
-
+        <div className="prompt-div">
+          <label>Propmt 1:</label>
+          <input
+            name="promptOne"
+            value={promptOne.text}
+            onChange={this.handlePromptInputChange}
+            placeholder=" Prompt 1"
+          />
+          <label> isLie:</label>
+          <input
+            className="lie-checkbox"
+            name="promptOne"
+            type="checkbox"
+            onChange={this.handleIsLieChecked}
+          />
+        </div>
+        <div className="prompt-div">
+          <label>Propmt 2:</label>
+          <input
+            name="promptTwo"
+            value={promptTwo.text}
+            onChange={this.handlePromptInputChange}
+            placeholder=" Prompt 2"
+          />
+          <label> isLie:</label>
+          <input
+            className="lie-checkbox"
+            name="promptTwo"
+            type="checkbox"
+            onChange={this.handleIsLieChecked}
+          />
+        </div>
+        <div className="prompt-div">
+          <label>Propmt 3:</label>
+          <input
+            name="promptThree"
+            value={promptThree.text}
+            onChange={this.handlePromptInputChange}
+            placeholder=" Prompt 3"
+          />
+          <label>isLie:</label>
+          <input
+            className="lie-checkbox"
+            name="promptThree"
+            type="checkbox"
+            onChange={this.handleIsLieChecked}
+          />
+        </div>
         <div className="vote-prompt-div">
           <label>Vote:</label>
           <input
@@ -169,6 +154,8 @@ export class App extends Component {
           Ping Server
         </button>
 
+        {/* </form> */}
+
         <GetPoll />
       </div>
     );
@@ -176,6 +163,7 @@ export class App extends Component {
 }
 
 async function ping(userName) {
+  // console.log(userName);
   const response = await fetch(`${serverURL}/ping`, {
     method: "POST", // *GET, POST, PUT, DELETE, etc.
     mode: "cors",
@@ -205,19 +193,19 @@ async function sendPrompt(event) {
     },
 
     body: JSON.stringify({
-      userName: event.userName,
+      userName: event.username,
       prompts: {
         promptOne: {
-          prompt: event.prompts[0].prompt,
-          isLie: event.prompts[0].isLie,
+          prompt: event.promptOne.text,
+          isLie: event.promptOne.isLie,
         },
         promptTwo: {
-          prompt: event.prompts[1].prompt,
-          isLie: event.prompts[1].isLie,
+          prompt: event.promptTwo.text,
+          isLie: event.promptTwo.isLie,
         },
         promptThree: {
-          prompt: event.prompts[2].prompt,
-          isLie: event.prompts[2].isLie,
+          prompt: event.promptThree.text,
+          isLie: event.promptThree.isLie,
         },
       },
     }),
@@ -238,7 +226,7 @@ async function sendVote(event) {
       "x-Trigger": "CORS",
     },
     body: JSON.stringify({
-      userName: event.userName,
+      userName: event.username,
       promptVote: Number(event.vote), //Has to be type "number" and between 1 and 3
     }),
   });

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-const serverURL = "http://ce44-108-53-232-66.ngrok.io";
+const serverURL = "http://ad4d-108-53-232-66.ngrok.io";
 
 export class GetPoll extends Component {
   state = {
@@ -26,9 +26,6 @@ export class GetPoll extends Component {
       promptOne: response.currentPrompt.prompts.promptOne.prompt,
       promptTwo: response.currentPrompt.prompts.promptTwo.prompt,
       promptThree: response.currentPrompt.prompts.promptThree.prompt,
-      // voteOne: response.promptVotes[1],
-      // voteTwo: response.promptVotes[2],
-      // voteThree: response.promptVotes[3],
       isLie: {
         promptOne: {
           lie: response.currentPrompt.prompts.promptOne.isLie,
@@ -44,6 +41,9 @@ export class GetPoll extends Component {
         },
       },
     });
+    // this.setState({ ...response }, () => {
+    //   console.log("response", this.state);
+    // });
     // console.log(this.state);
   };
 
